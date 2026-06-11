@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}奖惩管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-award"></i> 奖惩管理</h4>
+    <a href="{{ url_for('reward_punish.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> 添加记录</a>
+</div>
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4"><input type="text" name="search" class="form-control" placeholder="搜索学号/姓名" value="{{ search }}"></div>
+    <div class="col-md-2"><select name="type" class="form-select"><option value="">全部类型</option><option value="奖励" {% if rtype=='奖励' %}selected{% endif %}>奖励</option><option value="惩罚" {% if rtype=='惩罚' %}selected{% endif %}>惩罚</option></select></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-outline-secondary">筛选</button></div>
+</form>
+<table class="table table-hover table-striped">
+<thead class="table-dark"><tr><th>学号</th><th>姓名</th><th>类型</th><th>名称</th><th>描述</th><th>日期</th><th>附件</th><th>操作</th></tr></thead>
+<tbody>
+{% for r in records %}
+<tr>
+    <td>{{ r[1] }}</td><td>{{ r[2] }}</td>
+    <td><span class="badge {% if r[3]=='奖励' %}badge-reward{% else %}badge-punish{% endif %}">{{ r[3] }}</span></td>
+    <td>{{ r[4] }}</td><td>{{ r[5] }}</td><td>{{ r[6] }}</td>
+    <td>
+        {% if r[7] %}
+        {% set files = r[7].split(',') %}
+        {% for f in files %}
+        {% set ext = f.rsplit('.',1)[-1].lower() if '.' in f else '' %}
+        {% if ext in ['jpg','jpeg','png','gif','bmp'] %}
+            <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('{{ url_for('static', filename=f) }}')">
+                <img src="{{ url_for('static', filename=f) }}" style="height:30px; border-radius:3px;">
+            </a>
+        {% elif ext in ['mp4','avi','mov','wmv'] %}
+            <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal" onclick="showVideo('{{ url_for('static', filename=f) }}')">
+                <i class="bi bi-play-btn fs-4 text-primary"></i>
+            </a>
+        {% else %}
+            <a href="{{ url_for('static', filename=f) }}" target="_blank"><i class="bi bi-file-earmark-text fs-4"></i></a>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </td>
+    <td>
+        <a href="{{ url_for('reward_punish.edit', rid=r[0]) }}" class="btn btn-sm btn-outline-warning">编辑</a>
+        <a href="{{ url_for('reward_punish.delete', rid=r[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除？')">删除</a>
+    </td>
+</tr>
+{% else %}
+<tr><td colspan="8" class="text-center text-muted">暂无奖惩记录</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
+{% block scripts %}
+<!-- 图片预览 Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">图片预览</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body text-center">
+        <img id="previewImage" src="" class="img-fluid" style="max-height:80vh;" alt="预览图片">
+      </div>
+      <div class="modal-footer">
+        <a id="downloadImage" href="" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> 下载</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 视频预览 Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">视频播放</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body text-center">
+        <video id="previewVideo" controls style="max-width:100%; max-height:70vh;">
+          您的浏览器不支持视频播放
+        </video>
+      </div>
+      <div class="modal-footer">
+        <a id="downloadVideo" href="" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> 下载</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function showImage(src) {
+    document.getElementById('previewImage').src = src;
+    document.getElementById('downloadImage').href = src;
+}
+function showVideo(src) {
+    var video = document.getElementById('previewVideo');
+    video.innerHTML = '';
+    var source = document.createElement('source');
+    source.src = src;
+    source.type = 'video/' + src.split('.').pop().toLowerCase();
+    video.appendChild(source);
+    video.load();
+    document.getElementById('downloadVideo').href = src;
+}
+</script>
+{% endblock %}

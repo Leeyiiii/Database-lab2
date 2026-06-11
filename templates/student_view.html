@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ s[1] }} - 学生详情{% endblock %}
+{% block content %}
+<h4><i class="bi bi-person-badge"></i> 学生详情</h4>
+<div class="card">
+<div class="card-body">
+    <div class="row">
+        <div class="col-md-3 text-center">
+            {% if s[11] %}
+                <a href="{{ url_for('static', filename=s[11]) }}" target="_blank">
+                    <img src="{{ url_for('static', filename=s[11]) }}" class="img-fluid rounded" alt="照片" style="max-height:200px;">
+                </a>
+                <div class="mt-2">
+                    <a href="{{ url_for('static', filename=s[11]) }}" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> 下载照片</a>
+                </div>
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px;"><span class="text-muted">暂无照片</span></div>
+            {% endif %}
+        </div>
+        <div class="col-md-9">
+            <table class="table table-bordered">
+                <tr><th>学号</th><td>{{ s[0] }}</td><th>姓名</th><td>{{ s[1] }}</td></tr>
+                <tr><th>性别</th><td>{{ s[2] }}</td><th>出生日期</th><td>{{ s[3] or '' }}</td></tr>
+                <tr><th>身份证号</th><td>{{ s[4] or '' }}</td><th>籍贯</th><td>{{ s[5] or '' }}</td></tr>
+                <tr><th>民族</th><td>{{ s[6] or '' }}</td><th>政治面貌</th><td>{{ s[7] or '' }}</td></tr>
+                <tr><th>电话</th><td>{{ s[8] or '' }}</td><th>邮箱</th><td>{{ s[9] or '' }}</td></tr>
+                <tr><th>家庭地址</th><td>{{ s[10] or '' }}</td><th>入学日期</th><td>{{ s[13] or '' }}</td></tr>
+                <tr><th>专业</th><td>{{ s[16] or '' }}</td><th></th><td></td></tr>
+            </table>
+            {% if s[12] %}
+            <a href="{{ url_for('static', filename=s[12]) }}" class="btn btn-outline-info btn-sm"><i class="bi bi-download"></i> 下载简历</a>
+            {% else %}
+            <span class="btn btn-outline-secondary btn-sm disabled"><i class="bi bi-download"></i> 暂无简历</span>
+            {% endif %}
+            <a href="{{ url_for('student.edit', sid=s[0]) }}" class="btn btn-outline-warning btn-sm">编辑</a>
+            <a href="{{ url_for('student.list') }}" class="btn btn-outline-secondary btn-sm ms-2">返回列表</a>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

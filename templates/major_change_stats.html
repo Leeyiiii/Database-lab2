@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}专业变更统计 - 学籍管理系统{% endblock %}
+{% block content %}
+<h4 class="mb-3"><i class="bi bi-bar-chart-fill"></i> 专业变更统计</h4>
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr><th>专业名称</th><th>所属系</th><th>转入人数</th><th>转出人数</th></tr>
+    </thead>
+    <tbody>
+        {% for s in stats %}
+        <tr>
+            <td>{{ s[0] }}</td>
+            <td>{{ s[1] }}</td>
+            <td>{{ s[2] }}</td>
+            <td>{{ s[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="mt-3">
+    <a href="{{ url_for('major.changes') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> 返回变更列表</a>
+</div>
+{% endblock %}

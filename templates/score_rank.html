@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}成绩排名{% endblock %}
+{% block content %}
+<h4><i class="bi bi-bar-chart"></i> 成绩排名</h4>
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4"><select name="course_id" class="form-select" required><option value="">选择课程</option>{% for c in courses %}<option value="{{ c[0] }}" {% if cid==c[0] %}selected{% endif %}>{{ c[0] }} - {{ c[1] }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-outline-primary">查询排名</button></div>
+</form>
+{% if cid %}
+<table class="table table-striped">
+<thead class="table-dark"><tr><th>排名</th><th>学号</th><th>姓名</th><th>总评成绩</th></tr></thead>
+<tbody>
+{% for r in ranks %}
+<tr><td>{{ r[3] }}</td><td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% endblock %}

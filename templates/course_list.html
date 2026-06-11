@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}课程管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-book"></i> 课程管理</h4>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="bi bi-plus-circle"></i> 添加课程</button>
+</div>
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4"><input type="text" name="search" class="form-control" placeholder="搜索课程编号/名称/教师" value="{{ search }}"></div>
+    <input type="hidden" name="sort" value="{{ sort }}">
+    <input type="hidden" name="order" value="{{ order }}">
+    <div class="col-md-2"><button type="submit" class="btn btn-outline-secondary">搜索</button></div>
+</form>
+<table class="table table-striped">
+<thead class="table-dark">
+<tr>
+    <th><a href="?search={{ search }}&sort=course_id&order={% if sort=='course_id' and order=='asc' %}desc{% else %}asc{% endif %}" class="text-white text-decoration-none">课程编号 {% if sort=='course_id' %}<i class="bi bi-caret-{% if order=='asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}</a></th>
+    <th><a href="?search={{ search }}&sort=course_name&order={% if sort=='course_name' and order=='asc' %}desc{% else %}asc{% endif %}" class="text-white text-decoration-none">课程名称 {% if sort=='course_name' %}<i class="bi bi-caret-{% if order=='asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}</a></th>
+    <th><a href="?search={{ search }}&sort=credits&order={% if sort=='credits' and order=='asc' %}desc{% else %}asc{% endif %}" class="text-white text-decoration-none">学分 {% if sort=='credits' %}<i class="bi bi-caret-{% if order=='asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}</a></th>
+    <th>学时</th>
+    <th>类型</th>
+    <th><a href="?search={{ search }}&sort=semester&order={% if sort=='semester' and order=='asc' %}desc{% else %}asc{% endif %}" class="text-white text-decoration-none">学期 {% if sort=='semester' %}<i class="bi bi-caret-{% if order=='asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}</a></th>
+    <th><a href="?search={{ search }}&sort=teacher&order={% if sort=='teacher' and order=='asc' %}desc{% else %}asc{% endif %}" class="text-white text-decoration-none">教师 {% if sort=='teacher' %}<i class="bi bi-caret-{% if order=='asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}</a></th>
+    <th>大纲</th>
+    <th>操作</th>
+</tr>
+</thead>
+<tbody>
+{% for c in courses %}
+<tr>
+    <td>{{ c[0] }}</td>
+    <td>{{ c[1] }}</td>
+    <td>{{ c[2] }}</td>
+    <td>{{ c[3] }}</td>
+    <td>{{ c[4] }}</td>
+    <td>{{ c[5] }}</td>
+    <td>{{ c[6] }}</td>
+    <td>{% if c[7] %}<a href="/static/{{ c[7] }}" target="_blank" class="btn btn-sm btn-outline-info">查看</a>{% else %}无{% endif %}</td>
+    <td>
+        <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editCourseModal"
+                onclick="fillEdit('{{ c[0] }}','{{ c[1] }}',{{ c[2] }},{{ c[3] }},'{{ c[4] }}','{{ c[5] or '' }}','{{ c[6] or '' }}','{{ c[9] or '' }}')">编辑</button>
+        <a href="{{ url_for('course.delete', cid=c[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除？')">删除</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if total_pages > 1 %}
+<nav>
+    <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item"><a class="page-link" href="?search={{ search }}&sort={{ sort }}&order={{ order }}&page={{ page-1 }}">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        {% for p in range(1, total_pages+1) %}
+        <li class="page-item {% if p==page %}active{% endif %}"><a class="page-link" href="?search={{ search }}&sort={{ sort }}&order={{ order }}&page={{ p }}">{{ p }}</a></li>
+        {% endfor %}
+        {% if page < total_pages %}
+        <li class="page-item"><a class="page-link" href="?search={{ search }}&sort={{ sort }}&order={{ order }}&page={{ page+1 }}">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<div class="text-muted small mt-1">共 {{ total_pages * 10 - 10 + (courses|length) if courses else 0 }} 条</div>
+
+<!-- 添加课程 Modal -->
+<div class="modal fade" id="addCourseModal" tabindex="-1">
+<div class="modal-dialog modal-lg"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">添加课程</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<form method="POST" action="{{ url_for('course.create') }}" enctype="multipart/form-data">
+<div class="modal-body row">
+    <div class="col-md-6 mb-3"><label class="form-label">课程编号</label><input type="text" name="course_id" class="form-control" required></div>
+    <div class="col-md-6 mb-3"><label class="form-label">课程名称</label><input type="text" name="course_name" class="form-control" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">学分</label><input type="number" name="credits" class="form-control" step="0.5" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">学时</label><input type="number" name="hours" class="form-control" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">课程类型</label><select name="course_type" class="form-select"><option>必修</option><option>选修</option><option>公选</option></select></div>
+    <div class="col-md-3 mb-3"><label class="form-label">开课学期</label><input type="text" name="semester" class="form-control" placeholder="如 2025-2026-1"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">授课教师</label><input type="text" name="teacher" class="form-control"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">教学大纲 (PDF/DOC)</label><input type="file" name="syllabus" class="form-control"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">教学资料 (可多选)</label><input type="file" name="material" class="form-control" multiple></div>
+    <div class="col-12 mb-3"><label class="form-label">课程描述</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+</div>
+<div class="modal-footer"><button type="submit" class="btn btn-primary">提交</button></div>
+</form>
+</div></div></div>
+
+<!-- 编辑课程 Modal -->
+<div class="modal fade" id="editCourseModal" tabindex="-1">
+<div class="modal-dialog modal-lg"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">编辑课程</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<form id="editCourseForm" method="POST" enctype="multipart/form-data">
+<div class="modal-body row">
+    <div class="col-md-6 mb-3"><label class="form-label">课程名称</label><input type="text" name="course_name" id="editName" class="form-control" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">学分</label><input type="number" name="credits" id="editCredits" class="form-control" step="0.5" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">学时</label><input type="number" name="hours" id="editHours" class="form-control" required></div>
+    <div class="col-md-3 mb-3"><label class="form-label">课程类型</label><select name="course_type" id="editType" class="form-select"><option>必修</option><option>选修</option><option>公选</option></select></div>
+    <div class="col-md-3 mb-3"><label class="form-label">开课学期</label><input type="text" name="semester" id="editSemester" class="form-control"></div>
+    <div class="col-md-3 mb-3"><label class="form-label">授课教师</label><input type="text" name="teacher" id="editTeacher" class="form-control"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">教学大纲 (替换)</label><input type="file" name="syllabus" class="form-control"></div>
+    <div class="col-md-6 mb-3"><label class="form-label">追加教学资料</label><input type="file" name="material" class="form-control" multiple></div>
+    <div class="col-12 mb-3"><label class="form-label">课程描述</label><textarea name="description" id="editDesc" class="form-control" rows="2"></textarea></div>
+</div>
+<div class="modal-footer"><button type="submit" class="btn btn-warning">保存修改</button></div>
+</form>
+</div></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+function fillEdit(id, name, credits, hours, type, sem, teacher, desc) {
+    document.getElementById('editCourseForm').action = '/course/edit/' + id;
+    document.getElementById('editName').value = name;
+    document.getElementById('editCredits').value = credits;
+    document.getElementById('editHours').value = hours;
+    document.getElementById('editType').value = type;
+    document.getElementById('editSemester').value = sem;
+    document.getElementById('editTeacher').value = teacher;
+    document.getElementById('editDesc').value = desc;
+}
+</script>
+{% endblock %}

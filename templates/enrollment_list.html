@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}选课管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-journal-check"></i> 选课管理</h4>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEnrollModal">
+        <i class="bi bi-plus-circle"></i> 添加选课
+    </button>
+</div>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr><th>ID</th><th>学号</th><th>姓名</th><th>课程编号</th><th>课程名称</th><th>学期</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+        {% for e in enrollments %}
+        <tr>
+            <td>{{ e[0] }}</td>
+            <td>{{ e[1] }}</td>
+            <td>{{ e[2] }}</td>
+            <td>{{ e[3] }}</td>
+            <td>{{ e[4] }}</td>
+            <td>{{ e[5] }}</td>
+            <td>
+                <a href="{{ url_for('enrollment.delete', eid=e[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除该选课记录？')">删除</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted">暂无选课记录</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- 添加选课 Modal -->
+<div class="modal fade" id="addEnrollModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('enrollment.create') }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">添加选课记录</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">学号</label>
+                        <input type="text" name="student_id" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">课程编号</label>
+                        <input type="text" name="course_id" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">学期</label>
+                        <input type="text" name="semester" class="form-control" placeholder="如 2025-2026-1" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">提交</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

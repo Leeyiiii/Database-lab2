@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}编辑奖惩记录{% endblock %}
+{% block content %}
+<h4><i class="bi bi-pencil-square"></i> 编辑奖惩记录</h4>
+<form method="POST" enctype="multipart/form-data" class="row g-3">
+    <input type="hidden" name="existing_paths" value="{{ r[6] or '' }}">
+    <div class="col-md-3"><label class="form-label">学生</label><select name="student_id" class="form-select" required>{% for s in students %}<option value="{{ s[0] }}" {% if r[1]==s[0] %}selected{% endif %}>{{ s[0] }} - {{ s[1] }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><label class="form-label">类型</label><select name="type" class="form-select"><option value="奖励" {% if r[2]=='奖励' %}selected{% endif %}>奖励</option><option value="惩罚" {% if r[2]=='惩罚' %}selected{% endif %}>惩罚</option></select></div>
+    <div class="col-md-3"><label class="form-label">名称</label><input type="text" name="name" class="form-control" value="{{ r[3] }}" required></div>
+    <div class="col-md-3"><label class="form-label">日期</label><input type="date" name="date" class="form-control" value="{{ r[5] }}" required></div>
+    <div class="col-md-6"><label class="form-label">描述</label><textarea name="description" class="form-control" rows="2">{{ r[4] }}</textarea></div>
+    <div class="col-md-3"><label class="form-label">图片证据</label><input type="file" name="evidence_image" class="form-control" accept="image/*" multiple></div>
+    <div class="col-md-3"><label class="form-label">视频证据</label><input type="file" name="evidence_video" class="form-control" accept="video/*" multiple></div>
+    <div class="col-md-3"><label class="form-label">文件证据</label><input type="file" name="evidence_file" class="form-control" accept=".pdf,.doc,.docx,.txt" multiple></div>
+    <div class="col-12">
+        {% if r[6] %}<small class="text-muted">当前附件: {{ r[6] }}</small>{% endif %}
+        <br><button type="submit" class="btn btn-warning">保存修改</button><a href="{{ url_for('reward_punish.list') }}" class="btn btn-secondary ms-2">返回</a>
+    </div>
+</form>
+{% endblock %}

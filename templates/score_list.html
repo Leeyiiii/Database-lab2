@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}成绩管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-table"></i> 成绩管理</h4>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addScoreModal"><i class="bi bi-plus-circle"></i> 录入成绩</button>
+</div>
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4"><input type="text" name="search" class="form-control" placeholder="搜索学号/姓名/课程" value="{{ search }}"></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-outline-secondary">搜索</button></div>
+</form>
+{% with messages = get_flashed_messages() %}{% if messages %}<div class="alert alert-info">{% for m in messages %}{{ m }}<br>{% endfor %}</div>{% endif %}{% endwith %}
+<table class="table table-hover table-striped">
+<thead class="table-dark"><tr><th>学号</th><th>姓名</th><th>课程编号</th><th>课程名称</th><th>平时成绩</th><th>期末成绩</th><th>总评成绩</th><th>学期</th><th>操作</th></tr></thead>
+<tbody>
+{% for s in scores %}
+<tr>
+    <td>{{ s[1] }}</td><td>{{ s[2] }}</td><td>{{ s[3] }}</td><td>{{ s[4] }}</td>
+    <td>{{ s[5] }}</td><td>{{ s[6] }}</td><td>{{ s[7] }}</td><td>{{ s[8] }}</td>
+    <td>
+        <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editScoreModal"
+                onclick="fillEdit({{ s[0] }}, {{ s[5] }}, {{ s[6] }})">编辑</button>
+        <a href="{{ url_for('score.delete', sid=s[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除？')">删除</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<!-- 录入成绩 Modal -->
+<div class="modal fade" id="addScoreModal" tabindex="-1">
+<div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">录入成绩</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<form method="POST" action="{{ url_for('score.create') }}">
+<div class="modal-body">
+    <div class="mb-3"><label class="form-label">学生</label>
+        <select name="student_id" class="form-select" required>
+            <option value="">-- 请选择学生 --</option>
+            {% for s in students %}<option value="{{ s[0] }}">{{ s[0] }} - {{ s[1] }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="mb-3"><label class="form-label">课程</label>
+        <select name="course_id" class="form-select" required onchange="autoFillSemester(this)">
+            <option value="">-- 请选择课程 --</option>
+            {% for c in courses %}<option value="{{ c[0] }}" data-semester="{{ c[2] }}">{{ c[0] }} - {{ c[1] }} ({{ c[2] }})</option>{% endfor %}
+        </select>
+    </div>
+    <div class="mb-3"><label class="form-label">学期</label><input type="text" name="semester" id="semesterInput" class="form-control" placeholder="选择课程后自动填充" required></div>
+    <div class="mb-3"><label class="form-label">平时成绩 (40%)</label><input type="number" name="usual_score" class="form-control" min="0" max="100" step="0.01" required></div>
+    <div class="mb-3"><label class="form-label">期末成绩 (60%)</label><input type="number" name="final_score" class="form-control" min="0" max="100" step="0.01" required></div>
+</div>
+<div class="modal-footer"><button type="submit" class="btn btn-primary">提交</button></div>
+</form>
+</div></div></div>
+
+<!-- 编辑成绩 Modal -->
+<div class="modal fade" id="editScoreModal" tabindex="-1">
+<div class="modal-dialog"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">编辑成绩</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<form id="editScoreForm" method="POST">
+<div class="modal-body">
+    <div class="mb-3"><label class="form-label">平时成绩 (40%)</label><input type="number" name="usual_score" id="editUsual" class="form-control" min="0" max="100" step="0.01" required></div>
+    <div class="mb-3"><label class="form-label">期末成绩 (60%)</label><input type="number" name="final_score" id="editFinal" class="form-control" min="0" max="100" step="0.01" required></div>
+</div>
+<div class="modal-footer"><button type="submit" class="btn btn-warning">保存修改</button></div>
+</form>
+</div></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+function fillEdit(id, usual, final) {
+    document.getElementById('editScoreForm').action = '/score/edit/' + id;
+    document.getElementById('editUsual').value = usual || 0;
+    document.getElementById('editFinal').value = final || 0;
+}
+function autoFillSemester(sel) {
+    var opt = sel.selectedOptions[0];
+    document.getElementById('semesterInput').value = opt ? (opt.getAttribute('data-semester') || '') : '';
+}
+</script>
+{% endblock %}

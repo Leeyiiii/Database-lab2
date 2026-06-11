@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}学生管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-people"></i> 学生管理</h4>
+    <a href="{{ url_for('student.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> 录入新生</a>
+</div>
+<form class="row g-2 mb-3" method="GET">
+    <div class="col-md-4"><input type="text" name="search" class="form-control" placeholder="搜索学号/姓名/专业" value="{{ search }}"></div>
+    <div class="col-md-2"><select name="sort" class="form-select"><option value="student_id" {% if sort=='student_id' %}selected{% endif %}>按学号</option><option value="name" {% if sort=='name' %}selected{% endif %}>按姓名</option><option value="gender" {% if sort=='gender' %}selected{% endif %}>按性别</option><option value="enrollment_date" {% if sort=='enrollment_date' %}selected{% endif %}>按入学日期</option></select></div>
+    <div class="col-md-2"><select name="order" class="form-select"><option value="asc" {% if order=='asc' %}selected{% endif %}>升序</option><option value="desc" {% if order=='desc' %}selected{% endif %}>降序</option></select></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-outline-secondary w-100">筛选</button></div>
+</form>
+<table class="table table-hover table-striped"><thead class="table-dark"><tr><th>学号</th><th>姓名</th><th>性别</th><th>出生日期</th><th>电话</th><th>邮箱</th><th>入学日期</th><th>专业</th><th>操作</th></tr></thead><tbody>{% for s in students %}<tr onclick="location.href='{{ url_for('student.view', sid=s[0]) }}'" style="cursor:pointer;"><td>{{ s[0] }}</td><td>{{ s[1] }}</td><td>{{ s[2] }}</td><td>{{ s[3] }}</td><td>{{ s[4] }}</td><td>{{ s[5] }}</td><td>{{ s[6] }}</td><td>{{ s[7] or '' }}</td><td onclick="event.stopPropagation();"><a href="{{ url_for('student.edit', sid=s[0]) }}" class="btn btn-sm btn-outline-warning">编辑</a> <a href="{{ url_for('student.delete', sid=s[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认归档该学生？')">归档</a></td></tr>{% else %}<tr><td colspan="9" class="text-center text-muted">暂无学生数据</td></tr>{% endfor %}</tbody></table>
+<nav><ul class="pagination">{% for p in range(1, total_pages+1) %}<li class="page-item {% if p==page %}active{% endif %}"><a class="page-link" href="?page={{ p }}&search={{ search }}&sort={{ sort }}&order={{ order }}">{{ p }}</a></li>{% endfor %}</ul></nav>
+{% endblock %}

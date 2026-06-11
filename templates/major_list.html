@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}专业管理 - 学籍管理系统{% endblock %}
+{% block content %}
+<h4><i class="bi bi-building"></i> 专业管理</h4>
+<form class="row g-2 mb-3" method="POST" action="{{ url_for('major.create') }}">
+    <div class="col-md-2"><input type="text" name="major_id" class="form-control" placeholder="专业编号" required></div>
+    <div class="col-md-3"><input type="text" name="major_name" class="form-control" placeholder="专业名称" required></div>
+    <div class="col-md-2"><input type="text" name="department" class="form-control" placeholder="所属院系"></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-success">添加专业</button></div>
+</form>
+<table class="table table-striped">
+<thead class="table-dark"><tr><th>专业编号</th><th>专业名称</th><th>所属院系</th><th>操作</th></tr></thead>
+<tbody>
+{% for m in majors %}
+<tr>
+    <form method="POST" action="{{ url_for('major.edit', mid=m[0]) }}" class="d-inline">
+    <td>{{ m[0] }}</td>
+    <td><input type="text" name="major_name" class="form-control form-control-sm" value="{{ m[1] }}"></td>
+    <td><input type="text" name="department" class="form-control form-control-sm" value="{{ m[2] or '' }}"></td>
+    <td>
+        <button type="submit" class="btn btn-sm btn-outline-warning">保存</button>
+        <a href="{{ url_for('major.delete', mid=m[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确认删除？')">删除</a>
+    </td>
+    </form>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

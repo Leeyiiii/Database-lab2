@@ -15,11 +15,11 @@ INSERT INTO Major (major_id, major_name, department, duration) VALUES
 ('PHY', '物理学', '物理学院', 4);
 
 -- 学生数据 (使用 enrollment_date)
-INSERT INTO Student (student_id, name, gender, birth_date, major_id, enrollment_date, phone, email)
+INSERT INTO Student (student_id, name, gender, birth_date, major_id, enrollment_date, phone, email, password_hash)
 VALUES
-('S2024001', '张三', '男', '2004-05-12', 'CS', '2024-09-01', '13800001001', 'zhangsan@example.com'),
-('S2024002', '李四', '女', '2004-08-23', 'SE', '2024-09-01', '13800001002', 'lisi@example.com'),
-('S2024003', '王五', '男', '2003-11-07', 'CS', '2023-09-01', '13800001003', 'wangwu@example.com');
+('S2024001', '张三', '男', '2004-05-12', 'CS', '2024-09-01', '13800001001', 'zhangsan@example.com', 'S2024001123'),
+('S2024002', '李四', '女', '2004-08-23', 'SE', '2024-09-01', '13800001002', 'lisi@example.com', 'S2024002123'),
+('S2024003', '王五', '男', '2003-11-07', 'CS', '2023-09-01', '13800001003', 'wangwu@example.com', 'S2024003123');
 
 -- 课程数据 (包含所有字段)
 INSERT INTO Course (course_id, course_name, credits, hours, course_type, semester, teacher, description) VALUES

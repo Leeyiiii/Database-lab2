@@ -1,0 +1,99 @@
+{% extends "student_base.html" %}
+{% block title %}成绩查询{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-table"></i> 成绩查询</h3>
+
+<!-- GPA 概览卡片 -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-dashboard text-bg-primary">
+            <div class="card-body text-center">
+                <h6>GPA</h6>
+                <h2>{{ gpa }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-dashboard text-bg-success">
+            <div class="card-body text-center">
+                <h6>总学分</h6>
+                <h2>{{ total_credits }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if scores %}
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-journal-check"></i> 成绩明细</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>学分</th>
+                        <th>学期</th>
+                        <th>平时成绩</th>
+                        <th>期末成绩</th>
+                        <th>总评成绩</th>
+                        <th>等级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in scores %}
+                    <tr>
+                        <td>{{ s[0] }}</td>
+                        <td>{{ s[1] }}</td>
+                        <td>{{ s[2] }}</td>
+                        <td>{{ s[3] or 'N/A' }}</td>
+                        <td>{{ s[4] if s[4] is not none else '-' }}</td>
+                        <td>{{ s[5] if s[5] is not none else '-' }}</td>
+                        <td>
+                            {% if s[6] is not none %}
+                            <strong>{{ s[6] }}</strong>
+                            {% else %}
+                            <span class="text-muted">暂未录入</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if s[6] is not none %}
+                                {% set sc = s[6]|float %}
+                                {% if sc >= 90 %}
+                                <span class="badge bg-success">A</span>
+                                {% elif sc >= 80 %}
+                                <span class="badge bg-primary">B</span>
+                                {% elif sc >= 70 %}
+                                <span class="badge bg-info">C</span>
+                                {% elif sc >= 60 %}
+                                <span class="badge bg-warning text-dark">D</span>
+                                {% else %}
+                                <span class="badge bg-danger">F</span>
+                                {% endif %}
+                            {% else %}
+                            <span class="badge bg-secondary">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    暂无选课记录或成绩未录入。请先在「课程选课」页面选修课程。
+</div>
+{% endif %}
+
+<div class="alert alert-light border mt-3">
+    <strong>GPA 计算规则（5分制）：</strong><br>
+    90-100 → 4.0 | 85-89 → 3.7 | 82-84 → 3.3 | 78-81 → 3.0 | 75-77 → 2.7<br>
+    72-74 → 2.3 | 68-71 → 2.0 | 64-67 → 1.5 | 60-63 → 1.0 | <60 → 0.0
+</div>
+{% endblock %}

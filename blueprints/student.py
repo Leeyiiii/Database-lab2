@@ -85,14 +85,18 @@ def create():
                 fn = secure_filename(sid + '_resume_' + file.filename)
                 file.save(os.path.join(UPLOAD_FOLDER, fn))
                 resume_path = 'uploads/' + fn
+        # 生成默认密码: 学号 + "123"
+        default_password = sid + '123'
+        password_hash = default_password
+
         try:
             query('''INSERT INTO Student (student_id,name,gender,birth_date,id_card,native_place,
                      ethnicity,political_status,phone,email,home_address,photo_path,resume_path,
-                     enrollment_date,major_id)
-                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+                     enrollment_date,major_id,password_hash)
+                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
                   (sid, name, gender, birth, id_card, native, ethnicity, political, phone, email,
-                   address, photo_path, resume_path, enrollment, major_id))
-            flash('学生信息录入成功')
+                   address, photo_path, resume_path, enrollment, major_id, password_hash))
+            flash(f'学生信息录入成功！默认密码：{default_password}')
         except Exception as e:
             flash(f'录入失败: {e}')
         return redirect(url_for('student.list'))

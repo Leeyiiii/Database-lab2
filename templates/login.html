@@ -1,24 +1,86 @@
 {% extends "base.html" %}
-{% block title %}管理员登录 - 学籍管理系统{% endblock %}
+{% block title %}登录 - 学籍管理系统{% endblock %}
 {% block content %}
-<div class="row justify-content-center" style="margin-top: 100px;">
+<div class="row justify-content-center" style="margin-top: 60px;">
     <div class="col-md-5">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white text-center">
-                <h4 class="mb-0"><i class="bi bi-shield-lock"></i> 管理员登录</h4>
+        <!-- 角色切换标签 -->
+        <ul class="nav nav-pills nav-fill mb-3" id="loginTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="admin-tab" data-bs-toggle="pill"
+                        data-bs-target="#admin-panel" type="button" role="tab"
+                        aria-controls="admin-panel" aria-selected="true">
+                    <i class="bi bi-shield-lock"></i> 管理员登录
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="student-tab" data-bs-toggle="pill"
+                        data-bs-target="#student-panel" type="button" role="tab"
+                        aria-controls="student-panel" aria-selected="false">
+                    <i class="bi bi-person"></i> 学生登录
+                </button>
+            </li>
+        </ul>
+
+        <!-- 面板区域 -->
+        <div class="tab-content" id="loginTabContent">
+            <!-- 管理员面板 -->
+            <div class="tab-pane fade show active" id="admin-panel" role="tabpanel" aria-labelledby="admin-tab">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5 class="mb-0"><i class="bi bi-shield-lock-fill"></i> 管理员登录</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <input type="hidden" name="role" value="admin">
+                            <div class="mb-3">
+                                <label for="admin-username" class="form-label">管理员账号</label>
+                                <input type="text" name="username" id="admin-username"
+                                       class="form-control" placeholder="请输入管理员用户名" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label for="admin-password" class="form-label">密码</label>
+                                <input type="password" name="password" id="admin-password"
+                                       class="form-control" placeholder="请输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> 管理员登录
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center text-muted small">
+                        演示账号：admin / admin123
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">管理员账号</label>
-                        <input type="text" name="username" id="username" class="form-control" required autofocus>
+
+            <!-- 学生面板 -->
+            <div class="tab-pane fade" id="student-panel" role="tabpanel" aria-labelledby="student-tab">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5 class="mb-0"><i class="bi bi-person-fill"></i> 学生登录</h5>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">密码</label>
-                        <input type="password" name="password" id="password" class="form-control" required>
+                    <div class="card-body">
+                        <form method="POST">
+                            <input type="hidden" name="role" value="student">
+                            <div class="mb-3">
+                                <label for="student-id" class="form-label">学号</label>
+                                <input type="text" name="username" id="student-id"
+                                       class="form-control" placeholder="请输入学号，如 S2024001" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="student-password" class="form-label">密码</label>
+                                <input type="password" name="password" id="student-password"
+                                       class="form-control" placeholder="请输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> 学生登录
+                            </button>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">登录</button>
-                </form>
+                    <div class="card-footer text-center text-muted small">
+                        演示账号：S2024001 / S2024001123（学号 + 123）
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,0 +1,71 @@
+{% extends "student_base.html" %}
+{% block title %}个人首页{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-speedometer2"></i> 个人首页</h3>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-dashboard text-bg-primary">
+            <div class="card-body text-center">
+                <i class="bi bi-book" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">{{ course_count }}</h5>
+                <p class="card-text">已选课程数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-dashboard text-bg-warning">
+            <div class="card-body text-center">
+                <i class="bi bi-award" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">{{ rp_count }}</h5>
+                <p class="card-text">奖惩记录数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-dashboard text-bg-success">
+            <div class="card-body text-center">
+                <i class="bi bi-building" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">{{ student[17] or '未分配' }}</h5>
+                <p class="card-text">当前专业</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-person-badge"></i> 个人信息</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr><th width="120">学号</th><td>{{ student[0] }}</td></tr>
+                    <tr><th>姓名</th><td>{{ student[1] }}</td></tr>
+                    <tr><th>性别</th><td>{{ student[2] }}</td></tr>
+                    <tr><th>出生日期</th><td>{{ student[3] or '未填写' }}</td></tr>
+                    <tr><th>身份证号</th><td>{{ student[4] or '未填写' }}</td></tr>
+                    <tr><th>籍贯</th><td>{{ student[5] or '未填写' }}</td></tr>
+                    <tr><th>民族</th><td>{{ student[6] or '未填写' }}</td></tr>
+                    <tr><th>政治面貌</th><td>{{ student[7] or '未填写' }}</td></tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr><th width="120">联系电话</th><td>{{ student[8] or '未填写' }}</td></tr>
+                    <tr><th>邮箱</th><td>{{ student[9] or '未填写' }}</td></tr>
+                    <tr><th>家庭地址</th><td>{{ student[10] or '未填写' }}</td></tr>
+                    <tr><th>入学日期</th><td>{{ student[13] or '未填写' }}</td></tr>
+                    <tr><th>专业</th><td>{{ student[17] or '未分配' }}（{{ student[14] or 'N/A' }}）</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-3">
+    <i class="bi bi-info-circle"></i>
+    如需修改个人信息，请联系管理员。你可以通过左侧导航浏览课程、申请转专业、查看成绩和奖惩记录。
+</div>
+{% endblock %}

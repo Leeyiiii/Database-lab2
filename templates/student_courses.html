@@ -1,0 +1,140 @@
+{% extends "student_base.html" %}
+{% block title %}课程选课{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-book"></i> 课程浏览与选课</h3>
+
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-journal-text"></i> 全部课程</h5>
+    </div>
+    <div class="card-body">
+        {% if courses %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>学分</th>
+                        <th>学时</th>
+                        <th>类型</th>
+                        <th>学期</th>
+                        <th>授课教师</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in courses %}
+                    <tr>
+                        <td>{{ c[0] }}</td>
+                        <td>{{ c[1] }}</td>
+                        <td>{{ c[2] }}</td>
+                        <td>{{ c[3] }}</td>
+                        <td><span class="badge {% if c[4]=='必修' %}bg-danger{% elif c[4]=='选修' %}bg-primary{% else %}bg-secondary{% endif %}">{{ c[4] }}</span></td>
+                        <td>{{ c[5] or 'N/A' }}</td>
+                        <td>{{ c[6] or 'N/A' }}</td>
+                        <td>
+                            {% if c[0] in enrolled_set %}
+                            <span class="badge bg-success">已选</span>
+                            {% else %}
+                            <span class="badge bg-secondary">未选</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if c[0] in enrolled_set %}
+                            <!-- 退课：需要找到 enrollment_id -->
+                            {% set ns = namespace(eid=none) %}
+                            {# 用 JS 处理退课，这里做简单链接 #}
+                            <a href="javascript:void(0)" class="btn btn-danger btn-sm disabled" title="请在管理员端退课">
+                                <i class="bi bi-x-circle"></i> 已选
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('portal.enroll', course_id=c[0]) }}" class="btn btn-success btn-sm"
+                               onclick="return confirm('确认选修《{{ c[1] }}》？');">
+                                <i class="bi bi-plus-circle"></i> 选课
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">暂无课程数据</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 已选课程（含退课按钮） -->
+<div class="card shadow mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-check-circle"></i> 我的选课</h5>
+    </div>
+    <div class="card-body">
+        {% set my_courses = courses | selectattr('0', 'in', enrolled_set) | list %}
+        {% if my_courses %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>课程编号</th>
+                        <th>课程名称</th>
+                        <th>学分</th>
+                        <th>类型</th>
+                        <th>学期</th>
+                        <th>授课教师</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in my_courses %}
+                    <tr>
+                        <td>{{ c[0] }}</td>
+                        <td>{{ c[1] }}</td>
+                        <td>{{ c[2] }}</td>
+                        <td><span class="badge {% if c[4]=='必修' %}bg-danger{% elif c[4]=='选修' %}bg-primary{% else %}bg-secondary{% endif %}">{{ c[4] }}</span></td>
+                        <td>{{ c[5] or 'N/A' }}</td>
+                        <td>{{ c[6] or 'N/A' }}</td>
+                        <td>
+                            <form method="GET" action="{{ url_for('portal.drop', enrollment_id=0) }}" style="display:inline;"
+                                  onsubmit="return dropCourse(event, '{{ c[0] }}');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i> 退课
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">你还没有选任何课程</div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// 退课：先查询 enrollment_id 再执行删除
+async function dropCourse(event, courseId) {
+    event.preventDefault();
+    if (!confirm('确认退选此课程？')) return;
+
+    try {
+        const resp = await fetch('/portal/courses'); // 解析 enrollment 需要另外接口
+        // 简化方案：直接跳转到后端处理
+        // 但需要 enrollment_id，这里用 course_id 反查
+        const res = await fetch(`/portal/drop_by_course/${courseId}`, { method: 'POST' });
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            alert('退课失败');
+        }
+    } catch (e) {
+        alert('请求失败：' + e);
+    }
+}
+</script>
+{% endblock %}

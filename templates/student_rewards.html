@@ -1,0 +1,51 @@
+{% extends "student_base.html" %}
+{% block title %}奖惩记录{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-award"></i> 奖惩记录</h3>
+
+<div class="card shadow">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-list-check"></i> 我的奖惩记录</h5>
+    </div>
+    <div class="card-body">
+        {% if rewards %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>编号</th>
+                        <th>类型</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rewards %}
+                    <tr>
+                        <td>{{ r[0] }}</td>
+                        <td>
+                            {% if r[1] == '奖励' %}
+                            <span class="badge bg-success"><i class="bi bi-trophy"></i> 奖励</span>
+                            {% elif r[1] == '惩罚' %}
+                            <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> 惩罚</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ r[1] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ r[2] }}</td>
+                        <td>{{ r[3] or '无' }}</td>
+                        <td>{{ r[4] or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-emoji-smile"></i> 暂无奖惩记录，继续加油！
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

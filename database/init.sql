@@ -41,6 +41,7 @@ CREATE TABLE Student (
     resume_path      VARCHAR(255) COMMENT '简历存储路径',
     enrollment_date  DATE COMMENT '入学日期',
     major_id         VARCHAR(20) COMMENT '当前专业ID',
+    password_hash    VARCHAR(255) DEFAULT NULL COMMENT '学生登录密码',
     is_deleted       TINYINT(1) DEFAULT 0 COMMENT '软删除标记 0=正常 1=已删除',
     FOREIGN KEY (major_id) REFERENCES Major(major_id)
         ON DELETE SET NULL ON UPDATE CASCADE

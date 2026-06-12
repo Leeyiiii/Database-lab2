@@ -1,0 +1,90 @@
+{% extends "student_base.html" %}
+{% block title %}转专业申请{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-arrow-left-right"></i> 转专业申请</h3>
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> 提交新申请</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">当前专业</label>
+                        <input type="text" class="form-control" value="{{ current_major_id or '未知' }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_major_id" class="form-label">目标专业 <span class="text-danger">*</span></label>
+                        <select name="new_major_id" id="new_major_id" class="form-select" required>
+                            <option value="">-- 请选择目标专业 --</option>
+                            {% for m in all_majors %}
+                            {% if m[0] != current_major_id %}
+                            <option value="{{ m[0] }}">{{ m[1] }} ({{ m[2] }})</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">申请理由</label>
+                        <textarea name="reason" id="reason" rows="4" class="form-control"
+                                  placeholder="请简述转专业原因..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-send"></i> 提交申请
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> 申请历史</h5>
+            </div>
+            <div class="card-body">
+                {% if history %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>原专业</th>
+                                <th>目标专业</th>
+                                <th>申请日期</th>
+                                <th>状态</th>
+                                <th>理由</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for h in history %}
+                            <tr>
+                                <td>{{ h[8] or h[2] }}</td>
+                                <td>{{ h[9] or h[3] }}</td>
+                                <td>{{ h[4] or 'N/A' }}</td>
+                                <td>
+                                    {% if h[6] == '待审批' %}
+                                    <span class="badge bg-warning text-dark">待审批</span>
+                                    {% elif h[6] == '已通过' %}
+                                    <span class="badge bg-success">已通过</span>
+                                    {% elif h[6] == '已拒绝' %}
+                                    <span class="badge bg-danger">已拒绝</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ h[6] }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ h[5] or '无' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">暂无转专业申请记录</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

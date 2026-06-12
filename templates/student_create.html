@@ -16,6 +16,7 @@
 <div class="col-md-3"><label class="form-label">家庭地址</label><input type="text" name="home_address" class="form-control"></div>
 <div class="col-md-3"><label class="form-label">入学日期</label><input type="date" name="enrollment_date" class="form-control"></div>
 <div class="col-md-3"><label class="form-label">专业</label><select name="major_id" class="form-select"><option value="">未分配</option>{% for m in majors %}<option value="{{ m[0] }}">{{ m[1] }}</option>{% endfor %}</select></div>
+<div class="col-md-3"><label class="form-label">登录密码</label><input type="text" class="form-control bg-light" value="自动设为 学号+123" readonly></div>
 <div class="col-md-3"><label class="form-label">照片</label><input type="file" name="photo" class="form-control" accept="image/*"></div>
 <div class="col-md-3"><label class="form-label">简历</label><input type="file" name="resume" class="form-control" accept=".pdf,.doc,.docx"></div>
 <div class="col-12"><button type="submit" class="btn btn-success">提交</button><a href="{{ url_for('student.list') }}" class="btn btn-secondary ms-2">返回</a></div>
